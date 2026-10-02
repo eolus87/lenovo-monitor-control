@@ -1,0 +1,8 @@
+# Normalize line endings in the repo so checkouts behave the same on Windows and Linux.
+* text=auto
+
+# Bash must be LF on every OS (CRLF breaks the shebang and syntax).
+*.sh text eol=lf
+
+# PowerShell runs fine with LF on Windows PowerShell 5.1+ and pwsh on Linux.
+*.ps1 text eol=lf
