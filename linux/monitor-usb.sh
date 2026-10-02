@@ -9,6 +9,8 @@
 # env:   DDC_DISPLAY=<n>   ddcutil display number (default: auto-detect by model "R45w")
 #        TIMEOUT=<sec>     wait for the hub to (dis)appear after a switch (default 15)
 set -euo pipefail
+# shellcheck source=lib.sh
+. "$(dirname "$0")/lib.sh"
 
 cmd="${1:-}"
 TIMEOUT="${TIMEOUT:-15}"
@@ -16,16 +18,10 @@ TIMEOUT="${TIMEOUT:-15}"
 hub_here() { lsusb -d 17ef:109e >/dev/null 2>&1 || lsusb -d 17ef:109f >/dev/null 2>&1; }
 state() { if hub_here; then echo here; else echo away; fi; }
 
-display_arg() {
-  if [[ -n "${DDC_DISPLAY:-}" ]]; then echo "--display $DDC_DISPLAY"; else echo "--model R45w-30"; fi
-}
-
 send_toggle() {
-  # shellcheck disable=SC2046
-  ddcutil $(display_arg) --noverify setvcp 0xF8 0x08
+  set_vcp 0xF8 0x08
   sleep 0.15
-  # shellcheck disable=SC2046
-  ddcutil $(display_arg) --noverify setvcp 0xF7 1
+  set_vcp 0xF7 1
 }
 
 switch_and_verify() { # $1 = want "here" or "away"
